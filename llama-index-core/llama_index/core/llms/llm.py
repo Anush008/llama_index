@@ -51,12 +51,14 @@ from llama_index.core.types import (
 )
 from llama_index.core.instrumentation.events.llm import (
     LLMPredictEndEvent,
+    LLMPredictStartEvent,
+    LLMStructuredPredictEndEvent,
+    LLMStructuredPredictStartEvent,
 )
 
 import llama_index.core.instrumentation as instrument
 from llama_index.core.base.llms.types import (
     ChatMessage,
-    ChatResponse,
 )
 
 dispatcher = instrument.get_dispatcher(__name__)
@@ -287,6 +289,7 @@ class LLM(BaseLLM):
 
     # -- Structured outputs --
 
+    @dispatcher.span
     def structured_predict(
         self,
         output_cls: BaseModel,
@@ -323,6 +326,9 @@ class LLM(BaseLLM):
         """
         from llama_index.core.program.utils import get_program_for_llm
 
+        dispatch_event = dispatcher.get_dispatch_event()
+
+        dispatch_event(LLMStructuredPredictStartEvent())
         program = get_program_for_llm(
             output_cls,
             prompt,
@@ -330,8 +336,11 @@ class LLM(BaseLLM):
             pydantic_program_mode=self.pydantic_program_mode,
         )
 
-        return program(**prompt_args)
+        result = program(**prompt_args)
+        dispatch_event(LLMStructuredPredictEndEvent())
+        return result
 
+    @dispatcher.span
     async def astructured_predict(
         self,
         output_cls: BaseModel,
@@ -368,6 +377,10 @@ class LLM(BaseLLM):
         """
         from llama_index.core.program.utils import get_program_for_llm
 
+        dispatch_event = dispatcher.get_dispatch_event()
+
+        dispatch_event(LLMStructuredPredictStartEvent())
+
         program = get_program_for_llm(
             output_cls,
             prompt,
@@ -375,7 +388,9 @@ class LLM(BaseLLM):
             pydantic_program_mode=self.pydantic_program_mode,
         )
 
-        return await program.acall(**prompt_args)
+        result = await program.acall(**prompt_args)
+        dispatch_event(LLMStructuredPredictEndEvent())
+        return result
 
     # -- Prompt Chaining --
 
@@ -405,6 +420,9 @@ class LLM(BaseLLM):
             print(output)
             ```
         """
+        dispatch_event = dispatcher.get_dispatch_event()
+
+        dispatch_event(LLMPredictStartEvent())
         self._log_template_data(prompt, **prompt_args)
 
         if self.metadata.is_chat_model:
@@ -415,10 +433,10 @@ class LLM(BaseLLM):
             formatted_prompt = self._get_prompt(prompt, **prompt_args)
             response = self.complete(formatted_prompt, formatted=True)
             output = response.text
-
-        dispatcher.event(LLMPredictEndEvent())
+        dispatch_event(LLMPredictEndEvent())
         return self._parse_output(output)
 
+    @dispatcher.span
     def stream(
         self,
         prompt: BasePromptTemplate,
@@ -487,6 +505,9 @@ class LLM(BaseLLM):
             print(output)
             ```
         """
+        dispatch_event = dispatcher.get_dispatch_event()
+
+        dispatch_event(LLMPredictStartEvent())
         self._log_template_data(prompt, **prompt_args)
 
         if self.metadata.is_chat_model:
@@ -498,9 +519,10 @@ class LLM(BaseLLM):
             response = await self.acomplete(formatted_prompt, formatted=True)
             output = response.text
 
-        dispatcher.event(LLMPredictEndEvent())
+        dispatch_event(LLMPredictEndEvent())
         return self._parse_output(output)
 
+    @dispatcher.span
     async def astream(
         self,
         prompt: BasePromptTemplate,
@@ -545,43 +567,7 @@ class LLM(BaseLLM):
 
         return stream_tokens
 
-    # -- Tool Calling --
-
-    def chat_with_tools(
-        self,
-        tools: List["BaseTool"],
-        user_msg: Optional[Union[str, ChatMessage]] = None,
-        chat_history: Optional[List[ChatMessage]] = None,
-        verbose: bool = False,
-        allow_parallel_tool_calls: bool = False,
-        **kwargs: Any,
-    ) -> ChatResponse:
-        """Predict and call the tool."""
-        raise NotImplementedError("predict_tool is not supported by default.")
-
-    async def achat_with_tools(
-        self,
-        tools: List["BaseTool"],
-        user_msg: Optional[Union[str, ChatMessage]] = None,
-        chat_history: Optional[List[ChatMessage]] = None,
-        verbose: bool = False,
-        allow_parallel_tool_calls: bool = False,
-        **kwargs: Any,
-    ) -> ChatResponse:
-        """Predict and call the tool."""
-        raise NotImplementedError("predict_tool is not supported by default.")
-
-    def _get_tool_calls_from_response(
-        self,
-        response: "AgentChatResponse",
-        error_on_no_tool_call: bool = True,
-        **kwargs: Any,
-    ) -> List[ToolSelection]:
-        """Predict and call the tool."""
-        raise NotImplementedError(
-            "_get_tool_calls_from_response is not supported by default."
-        )
-
+    @dispatcher.span
     def predict_and_call(
         self,
         tools: List["BaseTool"],
@@ -590,7 +576,12 @@ class LLM(BaseLLM):
         verbose: bool = False,
         **kwargs: Any,
     ) -> "AgentChatResponse":
-        """Predict and call the tool."""
+        """Predict and call the tool.
+
+        By default uses a ReAct agent to do tool calling (through text prompting),
+        but function calling LLMs will implement this differently.
+
+        """
         from llama_index.core.agent.react import ReActAgentWorker
         from llama_index.core.agent.types import Task
         from llama_index.core.memory import ChatMemoryBuffer
@@ -628,6 +619,7 @@ class LLM(BaseLLM):
 
         return output
 
+    @dispatcher.span
     async def apredict_and_call(
         self,
         tools: List["BaseTool"],

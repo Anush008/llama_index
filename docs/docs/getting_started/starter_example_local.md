@@ -1,7 +1,7 @@
 # Starter Tutorial (Local Models)
 
 !!! tip
-Make sure you've followed the [custom installation](installation.md) steps first.
+    Make sure you've followed the [custom installation](installation.md) steps first.
 
 This is our famous "5 lines of code" starter example with local LLM and embedding models. We will use `BAAI/bge-small-en-v1.5` as our embedding model and `Mistral-7B` served through `Ollama` as our LLM.
 
@@ -9,7 +9,7 @@ This is our famous "5 lines of code" starter example with local LLM and embeddin
 
 This example uses the text of Paul Graham's essay, ["What I Worked On"](http://paulgraham.com/worked.html). This and many other examples can be found in the `examples` folder of our repo.
 
-The easiest way to get it is to [download it via this link](https://raw.githubusercontent.com/run-llama/llama_index/main/docs/examples/data/paul_graham/paul_graham_essay.txt) and save it in a folder called `data`.
+The easiest way to get it is to [download it via this link](https://raw.githubusercontent.com/run-llama/llama_index/main/docs/docs/examples/data/paul_graham/paul_graham_essay.txt) and save it in a folder called `data`.
 
 ## Setup
 
@@ -70,5 +70,6 @@ This creates an engine for Q&A over your index and asks a simple question. You s
 You can view logs, persist/load the index similar to our [starter example](starter_example.md).
 
 !!! tip
-_ learn more about the [high-level concepts](./concepts.md).
-_ tell me how to [customize things](./customization.md). \* curious about a specific module? check out the guides on the left 👈
+    - learn more about the [high-level concepts](./concepts.md).
+    - tell me how to [customize things](./customization.md).
+    - curious about a specific module? check out the [component guides](../module_guides/index.md).

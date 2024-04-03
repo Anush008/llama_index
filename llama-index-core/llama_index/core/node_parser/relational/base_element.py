@@ -174,7 +174,7 @@ class BaseElementNodeParser(NodeParser):
             except ValidationError:
                 # There was a pydantic validation error, so we will run with text completion
                 # fill in the summary and leave other fields blank
-                query_engine = index.as_query_engine()
+                query_engine = index.as_query_engine(llm=llm)
                 response_txt = await query_engine.aquery(summary_query_str)
                 return TableOutput(summary=str(response_txt), columns=[])
 
@@ -346,3 +346,8 @@ class BaseElementNodeParser(NodeParser):
             if metadata_inherited:
                 node.metadata.update(metadata_inherited)
         return [node for node in nodes if len(node.text) > 0]
+
+    def __call__(self, nodes: List[BaseNode], **kwargs: Any) -> List[BaseNode]:
+        nodes = self.get_nodes_from_documents(nodes, **kwargs)
+        nodes, objects = self.get_nodes_and_objects(nodes)
+        return nodes + objects

@@ -1,5 +1,169 @@
 # ChangeLog
 
+## [2024-03-31]
+
+### `llama-index-core` [0.10.26]
+
+- pass proper query bundle in QueryFusionRetriever (#12387)
+- Update llama_parse_json_element.py to fix error on lists (#12402)
+- Add node postprocessors to retriever tool (#12415)
+- Fix bug where user specified llm is not respected in fallback logic in element node parsers(#12403)
+- log proper LLM response key for async callback manager events (#12421)
+- Deduplicate the two built-in react system prompts; Also make it read from a Markdown file (#12307)
+- fix bug in BatchEvalRunner for multi-evaluator eval_kwargs_lists (#12418)
+- add the callback manager event for vector store index insert_nodes (#12443)
+- fixes an issue with serializing chat messages into chat stores when they contain pydantic API objects (#12394)
+- fixes an issue with slow memory.get() operation (caused by multiple calls to get_all()) (#12394)
+- fixes an issue where an agent+tool message pair is cut from the memory (#12394)
+- Added `FnNodeMapping` for object index (#12391)
+- Make object mapping optional / hidden for object index (#12391)
+- Make object index easier to create from existing vector db (#12391)
+- When LLM failed to follow the react response template, tell it so #12300
+
+### `llama-index-embeddings-cohere` [0.1.5]
+
+- Bump cohere version to 5.1.1 (#12279)
+
+### `llama-index-embeddings-itrex` [0.1.0]
+
+- add Intel Extension for Transformers embedding model (#12410)
+
+### `llama-index-graph-stores-neo4j` [0.1.4]
+
+- make neo4j query insensitive (#12337)
+
+### `llama-index-llms-cohere` [0.1.5]
+
+- Bump cohere version to 5.1.1 (#12279)
+
+### `llama-index-llms-ipex-llm` [0.1.0]
+
+- add ipex-llm integration (#12322)
+
+### `llama-index-llms-litellm` [0.1.4]
+
+- Fix litellm ChatMessage role validation error (#12449)
+
+### `llama-index-llms-openai` [0.1.14]
+
+- Use `FunctionCallingLLM` base class in OpenAI (#12227)
+
+### `llama-index-packs-self-rag` [0.1.4]
+
+- Fix llama-index-core dep (#12374)
+
+### `llama-index-postprocessor-cohere-rerank` [0.1.4]
+
+- Bump cohere version to 5.1.1 (#12279)
+
+### `llama-index-postprocessor-rankllm-rerank` [0.1.1]
+
+- Added RankLLM rerank (#12296)
+- RankLLM fixes (#12399)
+
+### `llama-index-readers-papers` [0.1.4]
+
+- Fixed bug with path names (#12366)
+
+### `llama-index-vector-stores-analyticdb` [0.1.1]
+
+- Add AnalyticDB VectorStore (#12230)
+
+### `llama-index-vector-stores-kdbai` [0.1.4]
+
+- Fixed typo in imports/readme (#12370)
+
+### `llama-index-vector-stores-qdrant` [0.1.5]
+
+- add `in` filter operator for qdrant (#12376)
+
+## [2024-03-27]
+
+### `llama-index-core` [0.10.25]
+
+- Add score to NodeWithScore in KnowledgeGraphQueryEngine (#12326)
+- Batch eval runner fixes (#12302)
+
+### `llama-index-embeddings-cohere` [0.1.5]
+
+- Added support for binary / quantized embeddings (#12321)
+
+### `llama-index-llms-mistralai` [0.1.10]
+
+- add support for custom endpoints to MistralAI (#12328)
+
+### `llama-index-storage-kvstore-redis` [0.1.3]
+
+- Fix RedisDocstore node retrieval from docs property (#12324)
+
+## [2024-03-26]
+
+### `llama-index-core` [0.10.24]
+
+- pretty prints in `LlamaDebugHandler` (#12216)
+- stricter interpreter constraints on pandas query engine (#12278)
+- PandasQueryEngine can now execute 'pd.\*' functions (#12240)
+- delete proper metadata in docstore delete function (#12276)
+- improved openai agent parsing function hook (#12062)
+- add raise_on_error flag for SimpleDirectoryReader (#12263)
+- remove un-caught openai import in core (#12262)
+- Fix download_llama_dataset and download_llama_pack (#12273)
+- Implement EvalQueryEngineTool (#11679)
+- Expand instrumenation Span coverage for AgentRunner (#12249)
+- Adding concept of function calling agent/llm (mistral supported for now) (#12222, )
+
+### `llama-index-embeddings-huggingface` [0.2.0]
+
+- Use `sentence-transformers` as a backend (#12277)
+
+### `llama-index-postprocessor-voyageai-rerank` [0.1.0]
+
+- Added voyageai as a reranker (#12111)
+
+### `llama-index-readers-gcs` [0.1.0]
+
+- Added google cloud storage reader (#12259)
+
+### `llama-index-readers-google` [0.2.1]
+
+- Support for different drives (#12146)
+- Remove unnecessary PyDrive dependency from Google Drive Reader (#12257)
+
+### `llama-index-readers-readme` [0.1.0]
+
+- added readme.com reader (#12246)
+
+### `llama-index-packs-raft` [0.1.3]
+
+- added pack for RAFT (#12275)
+
+## [2024-03-23]
+
+### `llama-index-core` [0.10.23]
+
+- Added `(a)predict_and_call()` function to base LLM class + openai + mistralai (#12188)
+- fixed bug with `wait()` in async agent streaming (#12187)
+
+### `llama-index-embeddings-alephalpha` [0.1.0]
+
+- Added alephalpha embeddings (#12149)
+
+### `llama-index-llms-alephalpha` [0.1.0]
+
+- Added alephalpha LLM (#12149)
+
+### `llama-index-llms-openai` [0.1.7]
+
+- fixed bug with `wait()` in async agent streaming (#12187)
+
+### `llama-index-readers-docugami` [0.1.4]
+
+- fixed import errors in docugami reader (#12154)
+
+### `llama-index-readers-file` [0.1.12]
+
+- fix PDFReader for remote fs (#12186)
+
 ## [2024-03-21]
 
 ### `llama-index-core` [0.10.22]
@@ -38,7 +202,7 @@
 
 - fix unclosed session in es add function #12135
 
-### `llama-index-vector-stores-kbdai` [0.1.3]
+### `llama-index-vector-stores-kdbai` [0.1.3]
 
 - Add support for `KDBAIVectorStore` (#11967)
 
